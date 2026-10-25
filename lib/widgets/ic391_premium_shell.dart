@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 
 class IC391PremiumShell extends StatelessWidget {
-  const IC391PremiumShell({
-    super.key,
-    required this.child,
-    this.radius = 20,
-  });
+  const IC391PremiumShell({super.key, required this.child, this.radius = 20});
 
   final Widget child;
   final double radius;
@@ -28,14 +24,8 @@ class IC391PremiumShell extends StatelessWidget {
           ],
         ),
         boxShadow: const [
-          BoxShadow(
-            color: Color(0x6621D8FF),
-            blurRadius: 24,
-          ),
-          BoxShadow(
-            color: Color(0x44B340FF),
-            blurRadius: 36,
-          ),
+          BoxShadow(color: Color(0x6621D8FF), blurRadius: 24),
+          BoxShadow(color: Color(0x44B340FF), blurRadius: 36),
         ],
       ),
       child: Container(
@@ -44,11 +34,7 @@ class IC391PremiumShell extends StatelessWidget {
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF071D42),
-              Color(0xFF13092F),
-              Color(0xFF050B1A),
-            ],
+            colors: [Color(0xFF071D42), Color(0xFF13092F), Color(0xFF050B1A)],
           ),
         ),
         child: child,
@@ -58,10 +44,7 @@ class IC391PremiumShell extends StatelessWidget {
 }
 
 class IC391PremiumTheme extends StatelessWidget {
-  const IC391PremiumTheme({
-    super.key,
-    required this.child,
-  });
+  const IC391PremiumTheme({super.key, required this.child});
 
   final Widget child;
 
@@ -106,9 +89,7 @@ class IC391PremiumTheme extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             borderSide: const BorderSide(color: cyan, width: 2),
           ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),
         filledButtonTheme: FilledButtonThemeData(
           style: FilledButton.styleFrom(
@@ -124,9 +105,7 @@ class IC391PremiumTheme extends StatelessWidget {
           ),
         ),
         textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(
-            foregroundColor: gold,
-          ),
+          style: TextButton.styleFrom(foregroundColor: gold),
         ),
       ),
       child: child,

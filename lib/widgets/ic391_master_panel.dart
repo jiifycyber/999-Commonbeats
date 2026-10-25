@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../core/genesis_theme.dart';
 
 class IC391MasterPanel extends StatelessWidget {
@@ -21,8 +22,9 @@ class IC391MasterPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final accent = borderColor;
     final primaryGlow = accent ?? GenesisColors.cyan;
-    final secondaryGlow =
-        accent == null ? GenesisColors.purpleBright : GenesisColors.gold;
+    final secondaryGlow = accent == null
+        ? GenesisColors.purpleBright
+        : GenesisColors.gold;
 
     return Container(
       margin: margin,
@@ -243,10 +245,7 @@ class IC391MasterPanel extends StatelessWidget {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: padding,
-                  child: child,
-                ),
+                Padding(padding: padding, child: child),
               ],
             ),
           ),
