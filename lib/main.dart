@@ -1553,15 +1553,15 @@ class SoundsStation extends StatefulWidget {
 }
 
 class _SoundsStationState extends State<SoundsStation> {
-  void loadIntoStudio(SavedBeat beat) {
-    StudioBeatBridge.loadBeat(beat.id);
+  void loadIntoStudioId(String beatId) {
+    StudioBeatBridge.loadBeat(beatId);
     _CommonBeatsTabsState.studioTabRequest.value++;
     DefaultTabController.of(context).animateTo(0);
   }
 
   final player = AudioPlayer();
   final search = TextEditingController();
-  List<SavedBeat> beats = [];
+  List<String> beats = [];
   String? activeId;
   bool loading = false;
   String? error;
@@ -1579,8 +1579,8 @@ class _SoundsStationState extends State<SoundsStation> {
       error = null;
     });
     try {
-      final results = await BeatAutosave.listAll();
-      results.sort((a, b) => a.id.compareTo(b.id));
+      final results = await BeatAutosave.listBeatIds();
+      results.sort();
       if (mounted) setState(() => beats = results);
     } catch (e) {
       if (mounted) setState(() => error = e.toString());
@@ -1597,18 +1597,20 @@ class _SoundsStationState extends State<SoundsStation> {
     return "audio/mpeg";
   }
 
-  Future<void> playBeat(SavedBeat beat) async {
+  Future<void> playBeatId(String beatId) async {
+    final beat = await BeatAutosave.loadById(beatId);
+    if (beat == null) return;
     try {
-      if (activeId == beat.id && player.playing) {
+      if (activeId == beatId && player.playing) {
         await player.pause();
         return;
       }
-      if (activeId != beat.id) {
+      if (activeId != beatId) {
         await player.stop();
         await player.setAudioSource(
           _LibraryAudioSource(beat.bytes, mime(beat.name)),
         );
-        if (mounted) setState(() => activeId = beat.id);
+        if (mounted) setState(() => activeId = beatId);
       }
       await player.play();
     } catch (e) {
@@ -1731,7 +1733,7 @@ class _SoundsStationState extends State<SoundsStation> {
               ),
             ),
           ...filtered.map((entry) {
-            final beat = entry.value;
+            final beatId = entry.value;
             final beatNumber = entry.key + 1;
             return Card(
               shape: RoundedRectangleBorder(
@@ -1760,7 +1762,7 @@ class _SoundsStationState extends State<SoundsStation> {
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            "${(beat.bytes.length / 1048576).toStringAsFixed(2)} MB",
+                            "Audio loads on demand",
                             style: const TextStyle(
                               color: Colors.white60,
                               fontSize: 12,
@@ -1770,7 +1772,7 @@ class _SoundsStationState extends State<SoundsStation> {
                       ),
                     ),
                     OutlinedButton.icon(
-                      onPressed: () => loadIntoStudio(beat),
+                      onPressed: () => loadIntoStudioId(beatId),
                       icon: const Icon(Icons.open_in_new),
                       label: const Text("Load into Studio Pro"),
                     ),
@@ -1779,11 +1781,11 @@ class _SoundsStationState extends State<SoundsStation> {
                       stream: player.playerStateStream,
                       builder: (context, snapshot) {
                         final playing =
-                            activeId == beat.id &&
+                            activeId == beatId &&
                             (snapshot.data?.playing ?? false);
                         return IconButton.filled(
                           tooltip: playing ? "Pause" : "Play",
-                          onPressed: () => playBeat(beat),
+                          onPressed: () => playBeatId(beatId),
                           icon: Icon(playing ? Icons.pause : Icons.play_arrow),
                         );
                       },

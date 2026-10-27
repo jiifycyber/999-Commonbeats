@@ -9,6 +9,12 @@ class SavedBeat {
   SavedBeat(this.id, this.name, this.bytes);
 }
 
+class SavedBeatInfo {
+  final String id;
+  final int sizeBytes;
+  const SavedBeatInfo(this.id, this.sizeBytes);
+}
+
 class BeatAutosave {
   static final ValueNotifier<int> libraryRevision = ValueNotifier<int>(0);
   static const String _databaseName = "999_common_beats";
@@ -37,6 +43,26 @@ class BeatAutosave {
       await store.put(id, _latestKey);
       await transaction.completed;
       libraryRevision.value++;
+    } finally {
+      db.close();
+    }
+  }
+
+  static Future<List<String>> listBeatIds() async {
+    final db = await _open();
+    try {
+      final transaction = db.transaction(_storeName, idbModeReadOnly);
+      final ids = <String>[];
+      await for (final cursor
+          in transaction
+              .objectStore(_storeName)
+              .openKeyCursor(autoAdvance: true)) {
+        final key = cursor.key;
+        if (key is String && key != _latestKey) ids.add(key);
+      }
+      await transaction.completed;
+      ids.sort();
+      return ids;
     } finally {
       db.close();
     }
