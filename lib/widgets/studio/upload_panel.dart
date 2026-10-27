@@ -1,6 +1,7 @@
 import "package:file_picker/file_picker.dart";
 
 import "../../services/beat_autosave.dart";
+import "../../services/shared_beats_api.dart";
 
 import "package:flutter/foundation.dart";
 
@@ -64,6 +65,15 @@ class _UploadPanelState extends State<UploadPanel> {
         final mime = audioMime(file.name);
         await player.setAudioSource(_MemoryAudioSource(bytes, mime));
         await BeatAutosave.save(file.name, bytes);
+        try {
+          await SharedBeatsApi.uploadBeat(file.name, bytes);
+        } catch (error) {
+          if (mounted) {
+            setState(
+              () => errorMessage = "Saved locally; cloud upload failed: $error",
+            );
+          }
+        }
       } else {
         final path = file.path;
         if (path == null || path.isEmpty) {

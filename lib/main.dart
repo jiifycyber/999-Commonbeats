@@ -19,6 +19,8 @@ import 'widgets/ic391_premium_shell.dart';
 import 'widgets/ic391_master_panel.dart';
 
 import 'charts/beat_waveform_chart.dart';
+import 'services/shared_beats_api.dart';
+import 'screens/shared_beats_login.dart';
 
 void main() => runApp(const CommonBeatsApp());
 
@@ -29,8 +31,36 @@ class CommonBeatsApp extends StatelessWidget {
     title: '999 Common Beats',
     debugShowCheckedModeBanner: false,
     theme: GenesisTheme.dark,
-    home: const IC391PremiumTheme(child: CommonBeatsTabs()),
+    home: const IC391PremiumTheme(child: CommonBeatsAuthGate()),
   );
+}
+
+class CommonBeatsAuthGate extends StatefulWidget {
+  const CommonBeatsAuthGate({super.key});
+  @override
+  State<CommonBeatsAuthGate> createState() => _CommonBeatsAuthGateState();
+}
+
+class _CommonBeatsAuthGateState extends State<CommonBeatsAuthGate> {
+  bool? signedIn;
+  @override
+  void initState() {
+    super.initState();
+    SharedBeatsApi.signedIn.then((v) {
+      if (mounted) setState(() => signedIn = v);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (signedIn == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (signedIn!) {
+      return const CommonBeatsTabs();
+    }
+    return SharedBeatsLogin(onSignedIn: () => setState(() => signedIn = true));
+  }
 }
 
 class BeatsStudio extends StatefulWidget {
